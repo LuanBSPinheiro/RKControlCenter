@@ -4,13 +4,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RunasEstoque(
-    var galhoAntigo: Int = 0,
-    var particulaLuz: Int = 0,
-    var armaduraDullahan: Int = 0,
-    var cabeloAzul: Int = 0,
-    var garraLobo: Int = 0,
-    var ouro: Int = 0,
-    var denteOgre: Int = 0
+    val galhoAntigo: Int = 0,
+    val particulaLuz: Int = 0,
+    val armaduraDullahan: Int = 0,
+    val cabeloAzul: Int = 0,
+    val garraLobo: Int = 0,
+    val ouro: Int = 0,
+    val denteOgre: Int = 0
 )
 
 @Serializable
@@ -19,9 +19,8 @@ data class Personagem(
     val classe: String = "Cavaleiro Rúnico",
     var zeny: Long = 0L,
     val estoque: RunasEstoque = RunasEstoque(),
-    val checksDiarios: MutableMap<String, Boolean> = mutableMapOf()
+    val checksDiarios: Map<String, Boolean> = mapOf()
 )
-
 @Serializable
 data class PainelData(
     var perfilAtivo: String = "Principal",
