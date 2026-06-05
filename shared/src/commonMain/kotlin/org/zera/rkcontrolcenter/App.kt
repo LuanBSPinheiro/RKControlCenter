@@ -28,6 +28,13 @@ val ColorLuxanima = Color(0xFFB48EAD)
 val ColorOthila = Color(0xEBCB8B)
 val ColorMeta = Color(0xFF7C7C8A)
 
+val TarefasDiariasPadrao = listOf(
+    "Fazer Instância Diária",
+    "Coletar Drops / Quests de Runa",
+    "Gasto de Stamina (Mi Gao / Pinguicula)",
+    "Rift / Diárias da Guilda"
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
@@ -274,12 +281,91 @@ fun App() {
                         StorageManager.salvar(novoEstado)
                         painelState = novoEstado
                     }
-                    Box(modifier = Modifier.weight(1f))
+                    Box(modifier = Modifier.weight(1f)) // Fim do alinhamento da linha 3
+                } // 👈 FECHAMOS A ROW DO DENTE DE OGRE AQUI CORRETAMENTE
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // === CHECKLIST DIÁRIO (AGORA NO ESCOPO VERTICAL DA COLUMN) ===
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = "✓ TAREFAS DIÁRIAS (RESET DIÁRIO)",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
-            }
-        }
-    }
-}
+
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = ColorCardBg),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+
+                        // Passa por cada tarefa padrão e monta a linha com o checkbox
+                        TarefasDiariasPadrao.forEach { tarefa ->
+                            val isChecked = perfilAtual.checksDiarios[tarefa] ?: false
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Checkbox(
+                                    checked = isChecked,
+                                    onCheckedChange = { checked ->
+                                        val novosChecks = perfilAtual.checksDiarios.toMutableMap().apply {
+                                            put(tarefa, checked)
+                                        }
+
+                                        val novoPersonagem = perfilAtual.copy(checksDiarios = novosChecks)
+
+                                        val novosPerfis = painelState.perfis.toMutableMap().apply {
+                                            put(painelState.perfilAtivo, novoPersonagem)
+                                        }
+
+                                        val novoEstado = painelState.copy(perfis = novosPerfis)
+                                        StorageManager.salvar(novoEstado)
+                                        painelState = novoEstado
+                                    },
+                                    colors = CheckboxDefaults.colors(
+                                        checkedColor = ColorPrimary,
+                                        uncheckedColor = Color.Gray,
+                                        checkmarkColor = ColorBackground
+                                    )
+                                )
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                Text(
+                                    text = tarefa,
+                                    color = if (isChecked) ColorMeta else Color.White,
+                                    fontSize = 14.sp,
+                                    fontWeight = if (isChecked) FontWeight.Normal else FontWeight.Medium,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+
+                            if (tarefa != TarefasDiariasPadrao.last()) {
+                                HorizontalDivider(
+                                    color = Color.DarkGray,
+                                    thickness = 0.5.dp,
+                                    modifier = Modifier.padding(horizontal = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            } // Fecha o escopo da Column principal
+        } // Fecha o Scaffold
+    } // Fecha o MaterialTheme
+} // Fecha a fun App()
 
 // === COMPONENTE COMPARTILHADO REUTILIZÁVEL PARA OS CARDS DE ITENS ===
 @Composable
