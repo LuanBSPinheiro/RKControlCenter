@@ -13,9 +13,11 @@ The project currently targets Android and Web. Most application logic and UI liv
 - Rune stock tracking for Berkana, Thurisaz, Luxanima, Othila, Nauthiz, and Wyrd.
 - Reactive craft planner that calculates missing materials from the desired rune quantity.
 - Estimated zeny cost for missing craft materials based on saved bazar prices.
-- Daily checklist persisted per profile.
+- Custom farm and instance schedule persisted per profile.
+- Activity rows for instances, map farms, build tests, target monsters, route notes, and expected loot.
+- Daily completion checks with a reset action for the active profile.
 - Compose resource images for rune and material icons.
-- Native vector icons for common controls such as add, delete, check, and zeny total.
+- Native vector icons for common controls such as add, delete, check, reset, map, instance, and zeny total.
 
 ## Tech Stack
 
@@ -23,6 +25,7 @@ The project currently targets Android and Web. Most application logic and UI liv
 - Compose Multiplatform
 - Compose Material 3
 - Kotlinx Serialization
+- Kotlinx Datetime
 - Kotlin/Wasm and Kotlin/JS browser targets
 - Android application target
 
@@ -48,6 +51,9 @@ shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/App.kt
 shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/domain/MatrizCraft.kt
   Rune recipes and craft cost calculation.
 
+shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/domain/CronogramaData.kt
+  Reusable farm, instance, and test activity definitions.
+
 shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/domain/Models.kt
   Serializable app state models.
 
@@ -55,10 +61,10 @@ shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/data/StorageManager.kt
   JSON persistence facade used by the app.
 
 shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/ui/components/
-  Reusable Compose components and vector icons.
+  Reusable Compose components, farm activity rows, and vector icons.
 
 shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/ui/theme/Cores.kt
-  Shared color tokens and default daily tasks.
+  Shared color tokens and route category colors.
 
 shared/src/commonMain/composeResources/drawable/
   WebP icons used by the inventory and rune cards.
@@ -109,10 +115,12 @@ Android storage is currently a placeholder implementation and does not persist d
 
 - Keep shared UI in `shared/src/commonMain` unless a platform-specific API is required.
 - Add new rune recipes in `MatrizCraft`.
+- Add reusable farm or instance activity definitions in `CronogramaData.kt`.
 - Add new persisted fields to the serializable models before wiring them into UI state.
 - Put reusable UI controls in `ui/components`.
-- Put shared palette and static UI lists in `ui/theme/Cores.kt`.
+- Put shared palette and category colors in `ui/theme/Cores.kt`.
 - Register new image assets under `shared/src/commonMain/composeResources/drawable`.
+- Custom schedule entries are stored on `Personagem.atividadesCustom`; completion state is stored in `checksDiarios`.
 
 ## Known Gaps
 
