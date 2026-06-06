@@ -10,7 +10,17 @@ data class RunasEstoque(
     val cabeloAzul: Int = 0,
     val garraLobo: Int = 0,
     val ouro: Int = 0,
-    val denteOgre: Int = 0
+    val denteOgre: Int = 0,
+    val pergaminhoAntigo: Int = 0,
+    val armaduraDestruida: Int = 0,
+    val caninoDragao: Int = 0,
+    val corrente: Int = 0,
+    val runaBerkana: Int = 0,
+    val runaThurisaz: Int = 0,
+    val runaLuxanima: Int = 0,
+    val runaOthila: Int = 0,
+    val runaNauthiz: Int = 0,
+    val runaWyrd: Int = 0
 )
 
 @Serializable
