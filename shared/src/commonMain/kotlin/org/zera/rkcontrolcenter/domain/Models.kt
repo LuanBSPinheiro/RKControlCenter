@@ -25,13 +25,25 @@ data class RunasEstoque(
 )
 
 @Serializable
+data class AtividadeFarm(
+    val id: String,
+    val name: String,
+    val rota: String,
+    val loot: String,
+    val test: Boolean = false,
+    val monstro: String = ""
+)
+
+@Serializable
 data class Personagem(
     val nome: String,
     val classe: String = "Cavaleiro Rúnico",
     var zeny: Long = 0L,
     val estoque: RunasEstoque = RunasEstoque(),
-    val checksDiarios: Map<String, Boolean> = mapOf()
+    val checksDiarios: Map<String, Boolean> = mapOf(),
+    val atividadesCustom: List<AtividadeFarm> = listOf()
 )
+
 @Serializable
 data class PainelData(
     var perfilAtivo: String = "Principal",

@@ -16,9 +16,7 @@ val ColorWyrd = Color(0xFFB48EAD)
 val ColorMaterialComum = Color(0xFF81A1C1)
 val ColorMeta = Color(0xFF7C7C8A)
 
-val TarefasDiariasPadrao = listOf(
-    "Fazer Instância Diária",
-    "Coletar Drops / Quests de Runa",
-    "Gasto de Stamina (Mi Gao / Pinguicula)",
-    "Rift / Diárias da Guilda"
-)
+// Novas cores de categoria baseadas no print
+val ColorInstancia = Color(0xFF00E5FF) // Ciano
+val ColorFarmMapa = Color(0xFF00E799)  // Verde
+val ColorTeste = Color(0xFFFFB300)     // Laranja/Amarelo

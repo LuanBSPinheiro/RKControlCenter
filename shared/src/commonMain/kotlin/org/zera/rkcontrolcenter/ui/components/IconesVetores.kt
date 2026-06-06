@@ -76,6 +76,64 @@ val IconeMoedaRodapeNativo: ImageVector by lazy {
     }
 }
 
+// ➕ Ícone de Instância padronizado (Sintaxe Corrigida)
+val IconeInstanciaNativo: ImageVector by lazy {
+    filledIcon(name = "Dungeon") {
+        moveTo(12f, 2f)
+        lineTo(4f, 5f)
+        verticalLineTo(15f) // 👈 Alterado de v para verticalLineTo
+        lineTo(12f, 22f)
+        lineTo(20f, 19f)
+        verticalLineTo(5f)  // 👈 Nota: o SVG original usava v(-14f) relativo. Convertido para a coordenada absoluta 5f
+        close()
+
+        moveTo(18f, 17f)
+        lineTo(12f, 19.5f)
+        lineTo(6f, 17.3f)
+        verticalLineTo(7.3f) // 👈 Convertido de v(-10f) relativo para a coordenada absoluta 7.3f
+        lineTo(12f, 4.5f)
+        lineTo(18f, 7f)
+        close()
+    }
+}
+
+// ➕ Ícone de Mapa de Farm padronizado (Sintaxe Corrigida)
+val IconeMapaNativo: ImageVector by lazy {
+    filledIcon(name = "Map") {
+        moveTo(20.5f, 3f)
+        lineTo(15f, 5.1f)
+        lineTo(9f, 3f)
+        lineTo(3.5f, 5.1f)
+        verticalLineTo(21f) // 👈 Convertido de v(15.9f) relativo para a coordenada absoluta 21f
+        lineTo(9f, 18.9f)
+        lineTo(15f, 21f)
+        lineTo(20.5f, 18.9f)
+        close()
+
+        moveTo(15f, 18.9f)
+        lineTo(9f, 16.8f)
+        verticalLineTo(3f)   // 👈 Convertido de v(-13.8f) relativo para a coordenada absoluta 3f
+        lineTo(15f, 15f)
+        close()
+    }
+}
+
+// ➕ NOVO: Ícone de Reset Diário padronizado
+val IconeResetNativo: ImageVector by lazy {
+    filledIcon(name = "Reset") {
+        moveTo(17.65f, 6.35f)
+        curveTo(16.2f, 4.9f, 14.21f, 4f, 12f, 4f)
+        curveTo(7.58f, 4f, 4.01f, 7.58f, 4.01f, 12f)
+        horizontalLineTo(7f)
+        curveTo(7f, 9.24f, 9.24f, 7f, 12f, 7f)
+        curveTo(13.38f, 7f, 14.63f, 7.56f, 15.54f, 8.46f)
+        lineTo(12f, 12f)
+        horizontalLineTo(21f)
+        verticalLineTo(3f)
+        close()
+    }
+}
+
 private fun filledIcon(
     name: String,
     fill: Color = Color.White,

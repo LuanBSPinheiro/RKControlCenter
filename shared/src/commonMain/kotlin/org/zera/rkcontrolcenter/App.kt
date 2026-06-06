@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -22,6 +23,7 @@ import org.zera.rkcontrolcenter.domain.MatrizCraft
 import org.zera.rkcontrolcenter.ui.components.*
 import org.zera.rkcontrolcenter.ui.theme.*
 import rkcontrolcenter.shared.generated.resources.*
+import kotlin.time.Clock
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -36,6 +38,8 @@ fun App() {
         var painelState by remember { mutableStateOf(StorageManager.carregar()) }
         var zenyInputText by remember { mutableStateOf("") }
         val quantidadeDesejadaMap = remember { mutableStateMapOf<String, String>() }
+
+        var mostrarDialogAddCronograma by remember { mutableStateOf(false) }
 
         val perfilAtual = painelState.perfis[painelState.perfilAtivo] ?: Personagem(nome = "Principal")
         val estoque = perfilAtual.estoque
@@ -111,7 +115,7 @@ fun App() {
                 // 3. INGREDIENTES BASE
                 Text(
                     "INGREDIENTES BASE (TODAS AS RUNAS)",
-                    color = Color.White,
+                    color = White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp)
@@ -162,7 +166,7 @@ fun App() {
                 // 4. COMPONENTES E MATERIAIS DE FARM (GRID FLUIDO 4 COLUNAS CORRIGIDO)
                 Text(
                     "COMPONENTES E MATERIAIS DE FARM",
-                    color = Color.White,
+                    color = White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Start).padding(bottom = 12.dp)
@@ -193,7 +197,6 @@ fun App() {
                                 meta = "Farm",
                                 corTitulo = estilo.first,
                                 icone = estilo.second,
-                                // ➕ PLUGANDO AS PROPRIEDADES DE PREÇO DO BAZAR:
                                 precoBazar = estoque.precosMercado[nome] ?: 0,
                                 onQuantidadeMudou = { q ->
                                     val novoEstoque = when (nome) {
@@ -213,7 +216,6 @@ fun App() {
                                     StorageManager.salvar(n); painelState = n
                                 },
                                 onPrecoMudou = { p ->
-                                    // Atualiza dinamicamente o preço do item atual no Map de precosMercado
                                     val novosPrecos = estoque.precosMercado.toMutableMap().apply { put(nome, p) }
                                     val n = painelState.copy(perfis = painelState.perfis.toMutableMap().apply {
                                         put(painelState.perfilAtivo, perfilAtual.copy(estoque = estoque.copy(precosMercado = novosPrecos)))
@@ -225,14 +227,22 @@ fun App() {
                     }
                 }
 
-                // 5. RUNAS PRINCIPAIS (ESTOQUE)
+                // 5. RUNAS PRINCIPAIS (ESTOQUE) - CORRIGIDO SEM EMOJI
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-                    horizontalArrangement = Arrangement.Start
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Icon(
+                        imageVector = IconeInstanciaNativo,
+                        contentDescription = null,
+                        tint = White,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "🛡️ RUNAS PRINCIPAIS (ESTOQUE)",
-                        color = Color.White,
+                        text = "RUNAS PRINCIPAIS (ESTOQUE)",
+                        color = White,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -259,8 +269,8 @@ fun App() {
                                 meta = "Pronta",
                                 corTitulo = estilo.first,
                                 icone = estilo.second,
-                                precoBazar = null,   // Runas prontas não têm preço de Bazar
-                                onPrecoMudou = null, // Oculta o input amarelo de preço
+                                precoBazar = null,
+                                onPrecoMudou = null,
                                 onQuantidadeMudou = { q ->
                                     val novoEstoque = when (nome) {
                                         "Berkana" -> estoque.copy(runaBerkana = q)
@@ -281,15 +291,23 @@ fun App() {
                     }
                 }
 
-                // 6. CALCULADOR DE RUNAS REATIVO
+                // 6. CALCULADOR DE RUNAS REATIVO - CORRIGIDO SEM EMOJI
                 Spacer(modifier = Modifier.height(24.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-                    horizontalArrangement = Arrangement.Start
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Icon(
+                        imageVector = IconeResetNativo,
+                        contentDescription = null,
+                        tint = ColorPrimary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "🔮 CALCULADOR DE RUNAS (PLANEJAMENTO)",
-                        color = Color.White,
+                        text = "CALCULADOR DE RUNAS (PLANEJAMENTO)",
+                        color = White,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -318,7 +336,7 @@ fun App() {
 
                             val result = MatrizCraft.calcularCraft(estoque, receita, qtdDesejada)
                             val podeCraftar = result.faltantesDetalhados.isEmpty() && qtdDesejada > 0
-                            val corTema = coresRunas[nomeRuna] ?: Color.White
+                            val corTema = coresRunas[nomeRuna] ?: White
 
                             Card(
                                 modifier = Modifier.width(larguraCard).heightIn(min = 180.dp),
@@ -347,7 +365,7 @@ fun App() {
                                             modifier = Modifier.width(55.dp).height(48.dp),
                                             textStyle = androidx.compose.ui.text.TextStyle(
                                                 fontSize = 12.sp,
-                                                color = Color.White,
+                                                color = White,
                                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                                             ),
                                             colors = OutlinedTextFieldDefaults.colors(
@@ -375,29 +393,23 @@ fun App() {
                                     } else {
                                         Column {
                                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                                // Indicador circular nativo vermelho
                                                 Box(modifier = Modifier.size(8.dp).background(Color.Red, shape = CircleShape))
                                                 Spacer(modifier = Modifier.width(6.dp))
                                                 Text(text = "Falta para $qtdDesejada runa(s):", color = Color.Red, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                             }
                                             Spacer(modifier = Modifier.height(4.dp))
 
-                                            // Renderização detalhada dos itens faltantes
                                             result.faltantesDetalhados.forEach { detalhe ->
                                                 val material = detalhe.first
                                                 val unitsMissing = detalhe.second
 
-                                                // Puxa o preço do Bazar para este material específico
                                                 val precoBazar = estoque.precosMercado[material] ?: 0
-                                                // Calcula o custo apenas para a quantidade faltante
                                                 val itemCost = unitsMissing.toLong() * precoBazar
 
-                                                // Formata o custo individual
                                                 val formattedCost = if (itemCost > 0L) {
                                                     " " + itemCost.toString().reversed().chunked(3).joinToString(".").reversed() + " z"
                                                 } else ""
 
-                                                // Texto final: "• 20 Ouro(s) 4.800.000 z"
                                                 Text(
                                                     text = buildAnnotatedString {
                                                         append("• $unitsMissing $material(s)")
@@ -411,7 +423,6 @@ fun App() {
                                                 )
                                             }
 
-                                            // Exibição do custo total da runa no rodapé
                                             if (result.custoTotalZeny > 0) {
                                                 Spacer(modifier = Modifier.height(8.dp))
                                                 HorizontalDivider(color = Color.DarkGray, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 4.dp))
@@ -443,58 +454,271 @@ fun App() {
                         }
                     }
                 }
-                // 7. CHECKLIST DIÁRIO
-                Spacer(modifier = Modifier.height(24.dp))
+
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-                    horizontalArrangement = Arrangement.Start
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "✓ TAREFAS DIÁRIAS (RESET DIÁRIO)",
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = IconeMapaNativo,
+                            contentDescription = null,
+                            tint = ColorZeny,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Cronograma & Rotas", color = ColorZeny, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    }
+
+                    Button(
+                        onClick = { mostrarDialogAddCronograma = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = ColorPrimary),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Icon(IconeAdicionarNativo, contentDescription = null, modifier = Modifier.size(16.dp), tint = ColorBackground)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Adicionar", color = ColorBackground, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                    }
                 }
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = ColorCardBg)
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    maxItemsInEachRow = 2
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        TarefasDiariasPadrao.forEach { tarefa ->
-                            val isChecked = perfilAtual.checksDiarios[tarefa] ?: false
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Checkbox(checked = isChecked, onCheckedChange = { chk ->
-                                    val nc = perfilAtual.checksDiarios.toMutableMap().apply { put(tarefa, chk) }
-                                    val n = painelState.copy(
-                                        perfis = painelState.perfis.toMutableMap().apply {
-                                            put(
-                                                painelState.perfilAtivo,
-                                                perfilAtual.copy(checksDiarios = nc)
-                                            )
-                                        })
-                                    StorageManager.salvar(n); painelState = n
+                    perfilAtual.atividadesCustom.forEach { atividade ->
+                        val isChecked = perfilAtual.checksDiarios[atividade.id] ?: false
+
+                        TarefaFarmRow(
+                            modifier = Modifier.weight(1f),
+                            name = atividade.name,
+                            rota = atividade.rota,
+                            loot = atividade.loot,
+                            isTest = atividade.test,
+                            monstro = atividade.monstro,
+                            isChecked = isChecked,
+                            onCheckedChange = { chk ->
+                                val novoMapa = perfilAtual.checksDiarios.toMutableMap().apply { put(atividade.id, chk) }
+                                val n = painelState.copy(perfis = painelState.perfis.toMutableMap().apply {
+                                    put(painelState.perfilAtivo, perfilAtual.copy(checksDiarios = novoMapa))
                                 })
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = tarefa,
-                                    color = if (isChecked) ColorMeta else Color.White,
-                                    fontSize = 14.sp,
-                                    modifier = Modifier.weight(1f)
-                                )
+                                StorageManager.salvar(n); painelState = n
+                            },
+                            onDeleteClick = {
+                                val listaFiltrada = perfilAtual.atividadesCustom.filter { it.id != atividade.id }
+
+                                val checksLimpos = perfilAtual.checksDiarios.toMutableMap().apply { remove(atividade.id) }
+
+                                val n = painelState.copy(perfis = painelState.perfis.toMutableMap().apply {
+                                    put(painelState.perfilAtivo, perfilAtual.copy(
+                                        atividadesCustom = listaFiltrada,
+                                        checksDiarios = checksLimpos
+                                    ))
+                                })
+                                StorageManager.salvar(n)
+                                painelState = n
                             }
-                            if (tarefa != TarefasDiariasPadrao.last()) HorizontalDivider(
-                                color = Color.DarkGray,
-                                thickness = 0.5.dp
-                            )
-                        }
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = {
+                        val n = painelState.copy(
+                            perfis = painelState.perfis.toMutableMap().apply {
+                                put(painelState.perfilAtivo, perfilAtual.copy(checksDiarios = emptyMap()))
+                            }
+                        )
+                        StorageManager.salvar(n)
+                        painelState = n
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF75A5B)),
+                    shape = RoundedCornerShape(6.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 40.dp)
+                        .height(44.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = IconeResetNativo,
+                            contentDescription = null,
+                            tint = White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Reset Diário (Limpar Checks)",
+                            color = White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp
+                        )
                     }
                 }
             }
+        }
+
+        if (mostrarDialogAddCronograma) {
+            var tipoInstancia by remember { mutableStateOf(true) }
+            var nomeAtividade by remember { mutableStateOf("") }
+            var infoExtra by remember { mutableStateOf("") } // Loot ou Rota
+            var localAtividade by remember { mutableStateOf("") } // Nome do Mapa
+            var ehTeste by remember { mutableStateOf(false) }
+            var nomeMonstro by remember { mutableStateOf("") }
+
+            AlertDialog(
+                onDismissRequest = { mostrarDialogAddCronograma = false },
+                title = { Text("Nova Atividade Diária", color = White, fontWeight = FontWeight.Bold, fontSize = 18.sp) },
+                text = {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Selecione o tipo de rota para o cronograma:", color = Color.LightGray, fontSize = 13.sp)
+
+                        // Seletores de Tipo (Chips)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            FilterChip(
+                                selected = tipoInstancia,
+                                onClick = { tipoInstancia = true },
+                                label = { Text("Instância", fontWeight = FontWeight.Bold) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = ColorInstancia,
+                                    selectedLabelColor = ColorBackground
+                                )
+                            )
+                            FilterChip(
+                                selected = !tipoInstancia,
+                                onClick = { tipoInstancia = false },
+                                label = { Text("Mapa de Farm", fontWeight = FontWeight.Bold) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = ColorPrimary,
+                                    selectedLabelColor = ColorBackground
+                                )
+                            )
+                        }
+
+                        // Input de Nome Principal
+                        OutlinedTextField(
+                            value = nomeAtividade,
+                            onValueChange = { nomeAtividade = it },
+                            label = { Text("Nome (Ex: Memórias de Sara)") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        // Inputs condicionais baseados na escolha do tipo
+                        if (tipoInstancia) {
+                            OutlinedTextField(
+                                value = infoExtra,
+                                onValueChange = { infoExtra = it },
+                                label = { Text("Descrição / O que buscar lá dentro?") },
+                                placeholder = { Text("Ex: Guardar comidas para vender ou usar") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        } else {
+                            OutlinedTextField(
+                                value = localAtividade,
+                                onValueChange = { localAtividade = it },
+                                label = { Text("Código do Mapa (Ex: spl_fild02)") },
+                                singleLine = true,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = nomeMonstro,
+                                onValueChange = { nomeMonstro = it },
+                                label = { Text("Monstro a ser caçado (Ex: Pinguicula)") },
+                                singleLine = true,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = infoExtra,
+                                onValueChange = { infoExtra = it },
+                                label = { Text("Rota de Acesso ou Drop principal") },
+                                placeholder = { Text("Ex: Vá para Esplendor -> 1 mapa à esquerda") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+
+                        // Toggle de Teste de Build
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
+                        ) {
+                            Checkbox(
+                                checked = ehTeste,
+                                onCheckedChange = { ehTeste = it },
+                                colors = CheckboxDefaults.colors(checkedColor = ColorTeste)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Marcar como Teste de Build", color = Color.LightGray, fontSize = 13.sp)
+                        }
+                    }
+                },
+                containerColor = ColorCardBg,
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            val nomeLimpo = nomeAtividade.trim()
+                            if (nomeLimpo.isNotEmpty()) {
+
+                                val novaAtiv = AtividadeFarm(
+                                    id = "id_${Clock.System.now().toEpochMilliseconds()}",
+                                    name = nomeLimpo,
+                                    rota = if (tipoInstancia) "Instância" else localAtividade.trim(),
+                                    loot = infoExtra.trim(),
+                                    test = ehTeste,
+                                    monstro = if (tipoInstancia) "" else nomeMonstro.trim() // ⚡ Salvando o monstro
+                                )
+
+                                // Realiza a soma estável da nova lista
+                                val novaListaAtividades = perfilAtual.atividadesCustom + novaAtiv
+
+                                val n = painelState.copy(
+                                    perfis = painelState.perfis.toMutableMap().apply {
+                                        put(painelState.perfilAtivo, perfilAtual.copy(atividadesCustom = novaListaAtividades))
+                                    }
+                                )
+                                StorageManager.salvar(n)
+                                painelState = n
+
+                                // Reseta o estado do modal para fechar limpo
+                                mostrarDialogAddCronograma = false
+                                nomeAtividade = ""
+                                infoExtra = ""
+                                localAtividade = ""
+                                ehTeste = false
+                                nomeMonstro = ""
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = ColorPrimary)
+                    ) {
+                        Text("Adicionar", color = ColorBackground, fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            mostrarDialogAddCronograma = false
+                            nomeAtividade = ""
+                            infoExtra = ""
+                            localAtividade = ""
+                            ehTeste = false
+                        }
+                    ) {
+                        Text("Cancelar", color = Color.Gray)
+                    }
+                }
+            )
         }
     }
 }
