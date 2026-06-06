@@ -20,7 +20,8 @@ data class RunasEstoque(
     val runaLuxanima: Int = 0,
     val runaOthila: Int = 0,
     val runaNauthiz: Int = 0,
-    val runaWyrd: Int = 0
+    val runaWyrd: Int = 0,
+    val precosMercado: Map<String, Int> = emptyMap()
 )
 
 @Serializable
