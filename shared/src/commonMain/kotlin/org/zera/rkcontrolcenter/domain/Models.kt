@@ -38,7 +38,7 @@ data class AtividadeFarm(
 data class Personagem(
     val nome: String,
     val classe: String = "Cavaleiro Rúnico",
-    val zeny: Long = 0L,
+    var zeny: Long = 0L,
     val estoque: RunasEstoque = RunasEstoque(),
     val checksDiarios: Map<String, Boolean> = mapOf(),
     val atividadesCustom: List<AtividadeFarm> = listOf()
@@ -46,8 +46,8 @@ data class Personagem(
 
 @Serializable
 data class PainelData(
-    val perfilAtivo: String = "Principal",
-    val perfis: Map<String, Personagem> = mapOf(
+    var perfilAtivo: String = "Principal",
+    val perfis: MutableMap<String, Personagem> = mutableMapOf(
         "Principal" to Personagem(nome = "Principal")
     )
 )
