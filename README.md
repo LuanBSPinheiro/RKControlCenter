@@ -1,37 +1,121 @@
-This is a Kotlin Multiplatform project targeting Android, Web.
+# RK Control Center
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+RK Control Center is a Kotlin Multiplatform + Compose Multiplatform app for tracking Rune Knight resources, zeny, daily tasks, and rune craft planning for Ragnarok LATAM gameplay.
 
-### Running the apps
+The project currently targets Android and Web. Most application logic and UI lives in the shared module so both targets can reuse the same dashboard experience.
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+## Features
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- Web app:
-  - Wasm target (faster, modern browsers): `./gradlew :webApp:wasmJsBrowserDevelopmentRun`
-  - JS target (slower, supports older browsers): `./gradlew :webApp:jsBrowserDevelopmentRun`
+- Multi-profile character tracking with active profile selection.
+- Zeny wallet tracking per profile.
+- Rune material inventory with icon-backed stock cards.
+- Bazar price inputs for farm materials.
+- Rune stock tracking for Berkana, Thurisaz, Luxanima, Othila, Nauthiz, and Wyrd.
+- Reactive craft planner that calculates missing materials from the desired rune quantity.
+- Estimated zeny cost for missing craft materials based on saved bazar prices.
+- Daily checklist persisted per profile.
+- Compose resource images for rune and material icons.
+- Native vector icons for common controls such as add, delete, check, and zeny total.
 
-### Running tests
+## Tech Stack
 
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
+- Kotlin Multiplatform
+- Compose Multiplatform
+- Compose Material 3
+- Kotlinx Serialization
+- Kotlin/Wasm and Kotlin/JS browser targets
+- Android application target
 
-- Android tests: `./gradlew :shared:testAndroidHostTest`
-- Web tests:
-  - Wasm target: `./gradlew :shared:wasmJsTest`
-  - JS target: `./gradlew :shared:jsTest`
+## Project Structure
 
----
+```text
+androidApp/
+  Android entry point and application packaging.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+webApp/
+  Web entry point for JS and Wasm browser targets.
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+shared/
+  Shared Compose UI, domain logic, models, storage abstraction, and resources.
+```
+
+Important shared files:
+
+```text
+shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/App.kt
+  Main Compose dashboard.
+
+shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/domain/MatrizCraft.kt
+  Rune recipes and craft cost calculation.
+
+shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/domain/Models.kt
+  Serializable app state models.
+
+shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/data/StorageManager.kt
+  JSON persistence facade used by the app.
+
+shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/ui/components/
+  Reusable Compose components and vector icons.
+
+shared/src/commonMain/kotlin/org/zera/rkcontrolcenter/ui/theme/Cores.kt
+  Shared color tokens and default daily tasks.
+
+shared/src/commonMain/composeResources/drawable/
+  WebP icons used by the inventory and rune cards.
+```
+
+## Running The App
+
+On Windows:
+
+```powershell
+.\gradlew.bat :androidApp:assembleDebug
+.\gradlew.bat :webApp:wasmJsBrowserDevelopmentRun
+.\gradlew.bat :webApp:jsBrowserDevelopmentRun
+```
+
+On macOS or Linux:
+
+```bash
+./gradlew :androidApp:assembleDebug
+./gradlew :webApp:wasmJsBrowserDevelopmentRun
+./gradlew :webApp:jsBrowserDevelopmentRun
+```
+
+Use the Wasm target for modern browsers. Use the JS target when browser compatibility is more important than runtime performance.
+
+## Verification
+
+Useful Gradle checks:
+
+```powershell
+.\gradlew.bat :shared:compileKotlinMetadata
+.\gradlew.bat :shared:wasmJsTest
+.\gradlew.bat :shared:jsTest
+.\gradlew.bat :shared:testAndroidHostTest
+```
+
+Use `./gradlew` instead of `.\gradlew.bat` on macOS or Linux.
+
+## Persistence
+
+The app stores `PainelData` as JSON through `StorageManager`.
+
+Web targets persist data in browser `localStorage`.
+
+Android storage is currently a placeholder implementation and does not persist data yet. The expected next step is to back `StoragePlatform` with SharedPreferences or DataStore.
+
+## Development Notes
+
+- Keep shared UI in `shared/src/commonMain` unless a platform-specific API is required.
+- Add new rune recipes in `MatrizCraft`.
+- Add new persisted fields to the serializable models before wiring them into UI state.
+- Put reusable UI controls in `ui/components`.
+- Put shared palette and static UI lists in `ui/theme/Cores.kt`.
+- Register new image assets under `shared/src/commonMain/composeResources/drawable`.
+
+## Known Gaps
+
+- Android persistence is not implemented yet.
+- Some platform template files, such as `Greeting.kt`, are still present and can be removed when no longer useful.
+- Automated tests for craft calculation and persistence migration are not yet in place.

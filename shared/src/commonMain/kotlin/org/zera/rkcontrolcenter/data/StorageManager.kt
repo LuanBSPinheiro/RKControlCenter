@@ -15,7 +15,7 @@ object StorageManager {
     }
 
     fun salvar(data: PainelData) {
-        val jsonString = jsonConfig.encodeToString(data) // 👈 Deixe simples assim
+        val jsonString = jsonConfig.encodeToString(data)
         StoragePlatform.salvarString(STORAGE_KEY, jsonString)
     }
 
@@ -23,7 +23,7 @@ object StorageManager {
         val jsonString = StoragePlatform.carregarString(STORAGE_KEY)
         return if (jsonString != null) {
             try {
-                jsonConfig.decodeFromString<PainelData>(jsonString) // 👈 Deixe simples assim
+                jsonConfig.decodeFromString<PainelData>(jsonString)
             } catch (e: Exception) {
                 PainelData()
             }

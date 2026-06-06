@@ -25,9 +25,9 @@ fun ItemEstoqueCard(
     meta: String,
     corTitulo: Color,
     icone: DrawableResource,
-    precoBazar: Int? = null, // NOVO: Se nulo, não renderiza a seção financeira
+    precoBazar: Int? = null,
     onQuantidadeMudou: (Int) -> Unit,
-    onPrecoMudou: ((Int) -> Unit)? = null // NOVO: Callback para atualizar preço
+    onPrecoMudou: ((Int) -> Unit)? = null
 ) {
     var textInput by remember(quantidade) { mutableStateOf("") }
     var precoInput by remember(precoBazar) { mutableStateOf(precoBazar?.toString() ?: "") }
@@ -61,9 +61,9 @@ fun ItemEstoqueCard(
                 OutlinedTextField(
                     value = textInput,
                     onValueChange = { textInput = it },
-                    label = { Text("Qtd Farm", fontSize = 10.sp) }, // 💡 Label flutuante evita cortes
+                    label = { Text("Qtd Farm", fontSize = 10.sp) }, //Label flutuante evita cortes
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.weight(1f).height(54.dp), // 📐 Altura estável para a Web
+                    modifier = Modifier.weight(1f).height(54.dp), //Altura estável para a Web
                     textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp, color = Color.White),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -98,9 +98,9 @@ fun ItemEstoqueCard(
                     OutlinedTextField(
                         value = precoInput,
                         onValueChange = { precoInput = it },
-                        label = { Text("Preço Bazar", fontSize = 10.sp) }, // 💡 Indicador claro do Bazar
+                        label = { Text("Preço Bazar", fontSize = 10.sp) }, //Indicador claro do Bazar
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f).height(54.dp), // 📐 Alinhado com o de cima
+                        modifier = Modifier.weight(1f).height(54.dp), //Alinhado com o de cima
                         textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp, color = ColorZeny),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -117,16 +117,15 @@ fun ItemEstoqueCard(
                             if (novoPreco != null) { onPrecoMudou(novoPreco) }
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = ColorZeny),
-                        contentPadding = PaddingValues(0.dp), // Removemos o padding para centralizar o ícone
+                        contentPadding = PaddingValues(0.dp),
                         modifier = Modifier.size(38.dp),
                         shape = RoundedCornerShape(4.dp)
                     ) {
-                        // SUBSTITUÍMOS O CARACTERE✓ POR UM ÍCONE VETORIAL NATIVO
                         Icon(
                             imageVector = IconeDinheiroNativo,
                             contentDescription = "Salvar Preço",
                             tint = ColorBackground,
-                            modifier = Modifier.size(20.dp) // Ajustamos o tamanho para ficar proporcional
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }

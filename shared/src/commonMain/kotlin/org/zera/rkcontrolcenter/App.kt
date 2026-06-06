@@ -259,8 +259,8 @@ fun App() {
                                 meta = "Pronta",
                                 corTitulo = estilo.first,
                                 icone = estilo.second,
-                                precoBazar = null,   // 🚫 Runas prontas não têm preço de Bazar
-                                onPrecoMudou = null, // 🚫 Oculta o input amarelo de preço
+                                precoBazar = null,   // Runas prontas não têm preço de Bazar
+                                onPrecoMudou = null, // Oculta o input amarelo de preço
                                 onQuantidadeMudou = { q ->
                                     val novoEstoque = when (nome) {
                                         "Berkana" -> estoque.copy(runaBerkana = q)
@@ -281,7 +281,7 @@ fun App() {
                     }
                 }
 
-                // 6. CALCULADOR DE RUNAS REATIVO (CORRIGIDO SEM UNRESOLVED REFERENCE)
+                // 6. CALCULADOR DE RUNAS REATIVO
                 Spacer(modifier = Modifier.height(24.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
@@ -317,7 +317,7 @@ fun App() {
                             val qtdDesejada = inputText.toIntOrNull() ?: 1
 
                             val result = MatrizCraft.calcularCraft(estoque, receita, qtdDesejada)
-                            val podeCraftar = result.faltantes_detalhados.isEmpty() && qtdDesejada > 0
+                            val podeCraftar = result.faltantesDetalhados.isEmpty() && qtdDesejada > 0
                             val corTema = coresRunas[nomeRuna] ?: Color.White
 
                             Card(
@@ -383,16 +383,16 @@ fun App() {
                                             Spacer(modifier = Modifier.height(4.dp))
 
                                             // Renderização detalhada dos itens faltantes
-                                            result.faltantes_detalhados.forEach { detalhe ->
+                                            result.faltantesDetalhados.forEach { detalhe ->
                                                 val material = detalhe.first
                                                 val unitsMissing = detalhe.second
 
                                                 // Puxa o preço do Bazar para este material específico
                                                 val precoBazar = estoque.precosMercado[material] ?: 0
-                                                // Calcula o custo apenas para a quantidade faltante (Long para segurança de 64 bits)
+                                                // Calcula o custo apenas para a quantidade faltante
                                                 val itemCost = unitsMissing.toLong() * precoBazar
 
-                                                // Formata o custo individual (ex: 4.800.000 z)
+                                                // Formata o custo individual
                                                 val formattedCost = if (itemCost > 0L) {
                                                     " " + itemCost.toString().reversed().chunked(3).joinToString(".").reversed() + " z"
                                                 } else ""
@@ -411,8 +411,7 @@ fun App() {
                                                 )
                                             }
 
-                                            // 💰 Mantemos a exibição do custo total da runa no rodapé
-                                            // 💰 Exibição do custo total da runa no rodapé (NATIVO SEM EMOJI CORROMPIDO)
+                                            // Exibição do custo total da runa no rodapé
                                             if (result.custoTotalZeny > 0) {
                                                 Spacer(modifier = Modifier.height(8.dp))
                                                 HorizontalDivider(color = Color.DarkGray, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 4.dp))
@@ -421,13 +420,12 @@ fun App() {
 
                                                 Row(
                                                     verticalAlignment = Alignment.CenterVertically
-                                                    // Sem o emoji de saquinho que quebrava, usamos o vetor legítimo
                                                 ) {
                                                     Icon(
                                                         imageVector = IconeMoedaRodapeNativo,
                                                         contentDescription = null,
                                                         tint = ColorZeny,
-                                                        modifier = Modifier.size(14.dp) // Ajustado o tamanho para casar com a fonte
+                                                        modifier = Modifier.size(14.dp)
                                                     )
                                                     Spacer(modifier = Modifier.width(4.dp))
                                                     Text(
