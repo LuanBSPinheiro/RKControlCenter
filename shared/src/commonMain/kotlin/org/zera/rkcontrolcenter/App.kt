@@ -35,6 +35,7 @@ fun App() {
         var zenyInputText by remember { mutableStateOf("") }
         val quantidadeDesejadaMap = remember { mutableStateMapOf<String, String>() }
         var mostrarDialogAddCronograma by remember { mutableStateOf(false) }
+        var mostrarDialogPix by remember { mutableStateOf(false) } // 🌟 Estado do Popup do QR Code
 
         val perfilAtual = painelState.perfis[painelState.perfilAtivo] ?: Personagem(nome = "Principal")
         val estoque = perfilAtual.estoque
@@ -272,7 +273,7 @@ fun App() {
                     }
                 }
 
-                // 6. CALCULADOR DE RUNAS RESPONSIVO (MODULARIZADO - CORRIGE DISPLAY DO IPHONE 16)
+                // 6. CALCULADOR DE RUNAS RESPONSIVO (MODULARIZADO)
                 Spacer(modifier = Modifier.height(24.dp))
                 RunePlannerSection(
                     perfil = perfilAtual,
@@ -366,7 +367,7 @@ fun App() {
                     shape = RoundedCornerShape(6.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 40.dp)
+                        .padding(bottom = 16.dp)
                         .height(44.dp)
                 ) {
                     Row(
@@ -388,6 +389,9 @@ fun App() {
                         )
                     }
                 }
+                FooterComponent {
+                    mostrarDialogPix = true
+                }
             }
         }
 
@@ -395,7 +399,7 @@ fun App() {
         if (mostrarDialogAddCronograma) {
             DialogAddCronograma(
                 onDismiss = { mostrarDialogAddCronograma = false },
-                onConfirm = { nome, tipo, rota, loot, monstro, teste -> // 👈 Nomeando os parâmetros recebidos do Dialog
+                onConfirm = { nome, tipo, rota, loot, monstro, teste ->
                     val novaAtiv = AtividadeFarm(
                         id = "id_${Clock.System.now().toEpochMilliseconds()}",
                         name = nome,
@@ -415,6 +419,11 @@ fun App() {
                     mostrarDialogAddCronograma = false
                 }
             )
+        }
+
+        // 11. DIALOG INTERATIVO DO QR CODE DO PIX
+        if (mostrarDialogPix) {
+            DialogPixQrCode(onDismiss = { mostrarDialogPix = false })
         }
     }
 }
